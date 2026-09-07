@@ -1,7 +1,10 @@
 /*jshint esversion: 8 */
 const express = require('express');
 const router = express.Router();
-const connectToDatabase = require('../models/db');router.get('/', async (req, res) => {
+const connectToDatabase = require('../models/db');
+
+// GET all gifts
+router.get('/', async (req, res) => {
     try {
         // Task 1: Connect to MongoDB and store connection to db constant
         const db = await connectToDatabase();
@@ -16,10 +19,11 @@ const connectToDatabase = require('../models/db');router.get('/', async (req, re
         res.json(gifts);
     } catch (e) {
         console.error('Error fetching gifts:', e);
-        next(e);
+        res.status(500).send('Error fetching gifts');
     }
 });
 
+// GET gift by ID
 router.get('/:id', async (req, res) => {
     try {
         // Task 1: Connect to MongoDB and store connection to db constant
@@ -44,8 +48,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-
-
 // Add a new gift
 router.post('/', async (req, res, next) => {
     try {
@@ -53,7 +55,7 @@ router.post('/', async (req, res, next) => {
         const collection = db.collection("gifts");
         const gift = await collection.insertOne(req.body);
 
-        res.status(201).json(gift.ops[0]);
+        res.status(201).json(gift.ops ? gift.ops[0] : gift);
     } catch (e) {
         next(e);
     }
