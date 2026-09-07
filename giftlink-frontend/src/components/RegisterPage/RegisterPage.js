@@ -10,7 +10,24 @@ function RegisterPage() {
 
     // handleRegister function
     const handleRegister = async () => {
-        console.log("Register invoked");
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                }),
+            });
+            const data = await res.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Registration failed:', error);
+        }
     };
 
     return (
