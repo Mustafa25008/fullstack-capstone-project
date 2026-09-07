@@ -8,7 +8,31 @@ function LoginPage() {
 
     // handleLogin function
     const handleLogin = async () => {
-        console.log("Inside handleLogin");
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('auth-token')}`
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            const json = await res.json();
+            if (json.authtoken) {
+                sessionStorage.setItem('auth-token', json.authtoken);
+                sessionStorage.setItem('name', json.userName);
+                sessionStorage.setItem('email', json.userEmail);
+                window.location.href = '/app';
+            } else {
+                console.error("Login failed:", json.error);
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+        }
     };
 
     return (
